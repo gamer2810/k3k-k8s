@@ -1,7 +1,6 @@
-SETUP 
+# SETUP 
 
-#
-![GOAL](goal.png)
+# ![GOAL](goal.png)
 
 # Steps
 Read through these to understand Oracle Cloud components
@@ -15,3 +14,4 @@ Read through these to understand Oracle Cloud components
     <li>Clone https://github.com/oracle-terraform-modules/terraform-oci-oke</li> 
     <li>Copy "terraform.tfvars" into the cloned repo</li>
     <li>Run terraform init - terraform plan - terraform apply</li> 
+</ol>
