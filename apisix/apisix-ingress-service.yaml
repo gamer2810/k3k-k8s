@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: apisix-admin
+  namespace: apisix
+  labels:
+    app.kubernetes.io/name: apisix
+spec:
+  type: ClusterIP
+  ports:
+  - name: apisix-admin
+    port: 9180
+    targetPort: 9180
+    protocol: TCP
+  selector:
+    app.kubernetes.io/name: apisix

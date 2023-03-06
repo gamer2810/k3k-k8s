@@ -1,0 +1,11 @@
+apiVersion: v1
+data:
+  config.yaml: 
+    secret:
+      secretName: apisix-ingress-conf
+kind: ConfigMap
+metadata:
+  name: apisix-configmap
+  namespace: apisix
+  labels:
+    app.kubernetes.io/name: ingress-controller

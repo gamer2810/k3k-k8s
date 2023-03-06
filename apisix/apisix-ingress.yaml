@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apisix-ingress-controller
+  namespace: apisix
+  labels:
+    app.kubernetes.io/name: ingress-controller
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ingress-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ingress-controller
+    spec:
+      serviceAccountName: apisix-ingress-controller
+      volumes:
+        - name: configuration
+          configMap:
+            name: apisix-configmap
+            items:
+              - key: config.yaml
+                path: config.yaml
+      initContainers:
+        - name: wait-apisix-admin
+          image: busybox:1.28
+          command: ['sh', '-c', "until nc -z apisix-admin.apisix.svc.cluster.local 9180 ; do echo waiting for apisix-admin; sleep 2; done;"]
+      containers:
+        - name: ingress-controller
+          command:
+            - /ingress-apisix/apisix-ingress-controller
+            - ingress
+            - --config-path
+            - /ingress-apisix/conf/config.yaml
+          image: "apache/apisix-ingress-controller:1.6.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          resources:
+            {}
+          volumeMounts:
+            - mountPath: /ingress-apisix/conf
+              name: configuration

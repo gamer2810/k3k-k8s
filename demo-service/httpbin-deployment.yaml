@@ -1,0 +1,40 @@
+# Define ApisixTls Objects
+apiVersion: apisix.apache.org/v2
+kind: ApisixTls
+metadata:
+  name: httpbin
+  namespace: apisix
+spec:
+  hosts:
+   - "api.k3k.dev"
+  secret:
+    name: httpbin
+    namespace: apisix
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: httpbin-route
+  namespace: apisix
+spec:
+  http:
+  - name: httpbin
+    match:
+      paths:
+      - /*
+    backends:
+      - serviceName: httpbin
+        servicePort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbin
+  namespace: apisix
+spec:
+  selector:
+    run: httpbin
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
