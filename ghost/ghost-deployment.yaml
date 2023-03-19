@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: ghost
+  name: ghost
+  namespace: apisix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: ghost
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: ghost
+    spec:
+      containers:
+        - env:
+            - name: database__client
+              value: mysql
+            - name: database__connection__database
+              value: ghost
+            - name: database__connection__host
+              value: mysql.apisix.svc.cluster.local
+            - name: database__connection__password
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-conf
+                  key: MYSQL_ROOT_PASSWORD
+            - name: database__connection__user
+              value: root
+            - name: url
+              value: https://api.k3k.dev/blog/
+            - name: mail__from
+              value: support@k3k.dev
+            - name: mail__transport
+              value: SMTP
+            - name: mail__port
+              value: "465"
+            - name: mail__port
+              value: Gmail
+            - name: mail__options__host
+              value: smtp.gmail.com
+            - name: mail__options__auth__user
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-conf
+                  key: GMAIL_USERNAME
+            - name: mail__options__auth__pass
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-conf
+                  key: GMAIL_PASSWORD
+          image: ghost:5.37-alpine
+          name: ghost
+          ports:
+            - containerPort: 2368
+          resources: {}
+      restartPolicy: Always
+status: {}

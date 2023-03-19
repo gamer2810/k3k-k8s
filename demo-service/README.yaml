@@ -1,0 +1,2 @@
+This httpbin deployment is used to test your Apisix configuration.
+The goal here is to expose a service to the internet using Apisix Ingress.

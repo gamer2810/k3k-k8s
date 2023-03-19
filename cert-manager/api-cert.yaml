@@ -11,7 +11,6 @@ spec:
   subject:
     organizations:
       - k3k
-  commonName: api.k3k.dev
   isCA: false
   privateKey:
     algorithm: RSA

@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: ghost
+  name: ghost
+  namespace: apisix
+spec:
+  ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 2368
+  selector:
+    io.kompose.service: ghost
+status:
+  loadBalancer: {}
+---
+apiVersion: apisix.apache.org/v2
+kind: ApisixRoute
+metadata:
+  name: ghost-route
+  namespace: apisix
+spec:
+  http:
+  - name: ghost
+    match:
+      paths:
+      - /blog*
+    backends:
+      - serviceName: ghost
+        servicePort: 8080
+    plugins:
+    - name: proxy-rewrite
+      enable: true
+      config:
+        regex_uri: ["^/blog(.*)","/$1"]
